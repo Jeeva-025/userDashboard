@@ -29,7 +29,7 @@
 
     useEffect(()=>{
         fetchUser();
-    },[data])
+    },[])
    
 
 
@@ -40,7 +40,11 @@
 
    const handleEdit=(user)=>{
          setEditId(user.id);
-         setEditContent(user);
+         setEditContent({
+          username: user.username,
+          email: user.email,
+          role: user.role,
+        });
    }
 
    const handleUpdate=()=>{
@@ -48,6 +52,7 @@
      setEditId(null);
      setEditContent({});
    }
+   console.log(editContent);
 
     return (
       <div className="p-4 bg-slate-50">
@@ -83,7 +88,7 @@
                 { user.id===editId ? (
                   <>
                   <td className='text-center'><input value={editContent.username}  
-                  onChange={(e)=>setEditContent({...editContent, name:e.target.value})}
+                  onChange={(e)=>setEditContent({...editContent, username:e.target.value})}
                   className='p-1 border-2 rounded-md focus:outline-none border-blue-500'/></td>
 
                   <td className='text-center'><input value={editContent.email}  
