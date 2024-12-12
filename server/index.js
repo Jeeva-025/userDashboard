@@ -5,6 +5,7 @@ import { testSequelizeConnection } from "./model/db.js";
 import UserRouter from './route/User.js';
 import sequelize from "./model/db.js";
 import User from "./model/User.js";
+import Role from "./model/Role.js";
 const app=express();
 
 dotenv.config();

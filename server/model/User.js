@@ -1,5 +1,6 @@
-import { Sequelize, DataTypes } from 'sequelize';
+import {  DataTypes } from 'sequelize';
 import sequelize from './db.js'; 
+import Role from './Role.js';
 
 const User = sequelize.define('User', {
   
@@ -31,18 +32,24 @@ const User = sequelize.define('User', {
   },
 
   
-  role: {
-    type: DataTypes.STRING,
-    allowNull: false,  
+  roleId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: Role, // Reference the Role model
+      key: 'id',
+    },
     validate: {
-      notNull: { msg: 'Role is required' },  
-      notEmpty: { msg: 'Role cannot be empty' }  
-    }
-  }
+      notNull: { msg: 'Role ID is required' },
+    },
+  },
 }, {
   
   tableName: 'users',  
   timestamps: true,     
 });
+
+User.belongsTo(Role, { foreignKey: 'roleId', as: 'role' });
+Role.hasMany(User, { foreignKey: 'roleId' });
 
 export default User;

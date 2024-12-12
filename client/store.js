@@ -5,6 +5,7 @@ import {persist, devtools} from "zustand/middleware";
 
 const userStore=(set)=>({
   users:[],
+  userEmail: null,  
   fetchUser: async()=>{
     try{
       const response= await axios.get("http://localhost:8080/api/user");
@@ -38,6 +39,7 @@ const userStore=(set)=>({
   },
   updateUser: async(userId, updateUser)=>{
     try{
+      
     const response = await axios.put(`http://localhost:8080/api/user/${userId}`, updateUser);
     set((state)=>({
       users:state.users.map(user=>(
@@ -48,6 +50,23 @@ const userStore=(set)=>({
       console.log(err);
     }
    
+  },
+
+
+  loginuser: async(data, sign)=>{
+    try{
+      
+      const response = await axios.post(`http://localhost:8080/api/user/${sign}`, data);
+      
+      set({ userEmail:  response.data.user.email});
+    }catch(err){
+      console.log(err.mssage);
+    }
+    
+  },
+
+  logout: ()=>{
+    set({ userEmail: null });
   }
 })
 

@@ -3,6 +3,9 @@
   import useUserStore from "../store.js";
   import { useEffect, useState } from 'react';
   import Adduser from '../components/Adduser.js';
+  import Authenticate from '../components/Authenticate.js';
+  import Edit from '../components/Edit.js';
+  
 
 
   const UsersList = () => {
@@ -13,10 +16,12 @@
     const [editId, setEditId]=useState(null);
     const[editContent, setEditContent]=useState({});
     const data=useUserStore((state)=> state.users);
+    const useremail=useUserStore((state)=> state.userEmail);
+    const logout=useUserStore((state)=> state.logout)
   
-    const addUser=useUserStore((state)=>state.addUser);
+    
     const deleteUser=useUserStore((state)=> state.deleteUser);
-    const updateUser=useUserStore((state)=> state.updateUser);
+    
     const fetchUser= useUserStore((state)=> state.fetchUser);
     
 
@@ -24,19 +29,17 @@
     const filteredUsers= data.filter(user =>user.username.toLowerCase().includes(searchQuery.toLowerCase()));
     
 
-    console.log(editContent);
-    
-
     useEffect(()=>{
         fetchUser();
     },[])
    
 
+    
+
 
    const handleDelete=(userId)=>{
   deleteUser(userId);
    }
-
 
    const handleEdit=(user)=>{
          setEditId(user.id);
@@ -47,17 +50,22 @@
         });
    }
 
-   const handleUpdate=()=>{
-     updateUser(editId, editContent);
-     setEditId(null);
-     setEditContent({});
-   }
-   console.log(editContent);
+   
+
+   
+   
 
     return (
-      <div className="p-4 bg-slate-50">
+      <>{
+        useremail? 
+
+        <div className="p-4 bg-slate-50">
         <div className='leading-10'>
-        <h1 className="text-3xl font-mono font-extrabold mx-auto">User Management</h1>
+        <div className="flex justify-between ">
+        <h1 className="text-3xl font-mono font-extrabold ">User Management</h1>
+        <div onClick={()=> logout()}
+         className="font-mono text-2xl font-extrabold hover:text-3xl hover:cursor-pointer"> Logout</div>
+        </div>
         <p className='text-sm mt-2'> Manage your team members and their roles</p>
         </div>
         <div  className='flex justify-between mt-5'>
@@ -84,28 +92,15 @@
           <tbody>
           { filteredUsers.map((user, index)=>(
              <tr key={index} className="mb-7 border-b border-gray-300">
-
+                
                 { user.id===editId ? (
-                  <>
-                  <td className='text-center'><input value={editContent.username}  
-                  onChange={(e)=>setEditContent({...editContent, username:e.target.value})}
-                  className='p-1 border-2 rounded-md focus:outline-none border-blue-500'/></td>
-
-                  <td className='text-center'><input value={editContent.email}  
-                  onChange={(e)=>setEditContent({...editContent, email:e.target.value})}
-                  className='p-1 border-2 rounded-md focus:outline-none border-blue-500'/></td>
-
-                 <td className='text-center'><input value={editContent.role}  
-                  onChange={(e)=>setEditContent({...editContent, role:e.target.value})}
-                  className='p-1 border-2 rounded-md focus:outline-none border-blue-500'/></td>
-
-                <td className='text-center flex justify-center gap-1'>
-                  <button onClick={()=>setEditId(null)}className="bg-slate-400 text-black py-2 px-4 rounded">
-                    Cancel
-                  </button>
-                  <button  onClick={()=>handleUpdate()} className="bg-stone-400 text-black py-2 px-4 rounded">Save</button>
+                  <td>
+                  <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
+                  <Edit editId={editId} editContent={editContent}
+                   setEditId={setEditId}
+                  setEditContent={setEditContent}  />
+                </div>
                 </td>
-                </>
                 ):(
                   <>
                 <td className='text-center'>{user.username}</td>
@@ -134,6 +129,28 @@
           </div>
         )}
       </div>
+        :
+        <Authenticate/>
+      }
+       
+       
+
+      </>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
     );
   };
 

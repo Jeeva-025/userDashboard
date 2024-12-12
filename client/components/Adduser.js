@@ -13,11 +13,11 @@ const Adduser = ({setIsModalOpen}) => {
           alert('All fields are required!');
           return; 
         }
-        if(!newUser.email.includes("@gmail.com")){
+        if(!newUser.email.endsWith("@gmail.com")){
             alert("Enter proper email");
             return;
         } 
-       
+       console.log(newUser);
         addUser(newUser)
         
         setIsModalOpen(false); 
@@ -43,13 +43,15 @@ const Adduser = ({setIsModalOpen}) => {
                   onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
                   className="w-full mb-4 p-2 border border-gray-300 rounded-md"
                 />
-                <input
-                  type="text"
-                  placeholder="Role"
-                  value={newUser.role}
-                  onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
-                  className="w-full mb-4 p-2 border border-gray-300 rounded-md"
-                />
+                <select
+                    value={newUser.role}
+                    onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
+                    className="w-full mb-4 p-2 border border-gray-300 rounded-md"
+                >
+                    <option value="">Select Role</option>
+                    <option value="Admin">Admin</option>
+                    <option value="Member">Member</option>
+                </select>
               </div>
               <div className="flex justify-between mt-4">
                 <button
