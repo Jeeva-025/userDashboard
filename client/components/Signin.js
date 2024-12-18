@@ -30,12 +30,16 @@ const SignIn = ({setLogin, login}) => {
     e.preventDefault();
     
     if (validateInputs()) {
-        try{
-      await loginuser({email, password}, "signin");
-      alert("Login Success");
-    }catch(err){
-        console.log(err);
-    }
+        
+      await loginuser({email, password}, "signin")
+      .then((res)=>{
+        console.log(res);
+        alert("Login Success");
+      })
+      
+    .catch((err)=>{
+        alert(err?.response?.data.message);
+    })
     }
   };
 

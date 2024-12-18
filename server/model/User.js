@@ -36,7 +36,7 @@ const User = sequelize.define('User', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: Role, // Reference the Role model
+      model: Role, 
       key: 'id',
     },
     validate: {

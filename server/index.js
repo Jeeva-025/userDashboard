@@ -6,6 +6,12 @@ import UserRouter from './route/User.js';
 import sequelize from "./model/db.js";
 import User from "./model/User.js";
 import Role from "./model/Role.js";
+import Platform from "./model/Platform.js";
+import Feedback from "./model/Feedback.js";
+import Tag from "./model/Tag.js";
+import Module from "./model/Module.js";
+import "./model/association.js";
+import FeedbackRouter from "./route/Feedback.js";
 const app=express();
 
 dotenv.config();
@@ -21,6 +27,7 @@ sequelize.sync()
 
 
   app.use("/api/user",UserRouter)
+  app.use("/api/feedback", FeedbackRouter)
   
 
 const startServer=async()=>{

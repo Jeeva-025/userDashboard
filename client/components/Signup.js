@@ -22,9 +22,13 @@ const Signup = ({setLogin, login}) => {
           alert("All fields are required!");
           return false;
         }
-    
+        
         if (validation.password !== validation.repassword) {
           alert("Passwords do not match!");
+          return false;
+        }
+        if(!validation.email.endsWith("@gmail.com")){
+          alert("Enetr proper Email");
           return false;
         }
         
@@ -34,16 +38,19 @@ const Signup = ({setLogin, login}) => {
     const handleSignUp=async(e)=>{
         e.preventDefault();
         if(validateInputs()){
-         try{
+         
            await loginuser({username:validation.username, 
             email:validation.email,
             password:validation.password
-           }, "signup");
-           alert("Login Success");
-       }catch(err){
-           console.log(err);
-    }}
+           }, "signup").then(()=>{
+            alert("Login Success");
+           })
+           
+       .catch((err)=>{
+        alert(err?.response?.data?.message);
+    })
     }
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">

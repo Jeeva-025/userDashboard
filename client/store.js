@@ -59,8 +59,10 @@ const userStore=(set)=>({
       const response = await axios.post(`http://localhost:8080/api/user/${sign}`, data);
       
       set({ userEmail:  response.data.user.email});
+      return response.data;
     }catch(err){
       console.log(err.mssage);
+      throw err;
     }
     
   },
