@@ -27,6 +27,7 @@ export const getAllFeedback= async(req, res)=>{
             ]
           });
           
+          
           // Transform the result to get the desired format
           const result = feedbacks.map(feedback => ({
             id: feedback.id,
@@ -34,7 +35,8 @@ export const getAllFeedback= async(req, res)=>{
             description: feedback.description,
             platforms: feedback.Platforms.map(platform => platform.name),
             modules: feedback.Modules.map(module => module.name),
-            tags: feedback.Tags.map(tag => tag.name)
+            tags: feedback.Tags.map(tag => tag.name),
+            vote:feedback.vote
           }));
           
           res.status(201).json(result);
@@ -49,13 +51,23 @@ export const getAllFeedback= async(req, res)=>{
 
 
 export const createFeedback = async (req, res) => {
-    const { title, description, platforms, modules, tags } = req.body;
+    let { title, description, platforms, modules, tags } = req.body;
+    const file=req.file;
+
+
+    if (typeof platforms === 'string') {
+      platforms = platforms.split(',').map(Number);
+  modules = modules.split(',').map(Number);
+  tags = tags.split(',').map(Number);
+    }
+
   
     try {
       // Create the feedback entry
       const feedback = await Feedback.create({
         title,
         description,
+        filename:file? file.filename:null,
       });
   
       // Associate platforms, modules, and tags
@@ -81,6 +93,7 @@ export const createFeedback = async (req, res) => {
           id: feedback.id,
           title: feedback.title,
           description: feedback.description,
+        
           platforms: platforms || [],
           modules: modules || [],
           tags: tags || [],
@@ -95,3 +108,58 @@ export const createFeedback = async (req, res) => {
     }
   };
   
+
+  export  const deleteFeedback= async(req, res)=>{
+    const{id}=req.params;
+    try{
+
+      const feedback =await Feedback.findByPk(id);
+
+      if(!feedback){
+        res.status(400).json({message:"Feedback does not found"});
+      }
+
+      await feedback.setPlatforms([]);
+      await feedback.setModules([]);
+      await feedback.setTags([]);
+      await feedback.destroy();
+
+      res.status(200).json({
+        message: "Feedback deleted successfully",
+      });
+
+    }catch(error){
+      console.log(error)
+        res.status(500).json({
+          message:"Error in deleting Feedback",
+          error:error.message
+        })
+      
+    }
+  }
+  
+
+  export const upVote=async(req, res)=>{
+    const{id}=req.params;
+    
+    try{
+
+      const feedback= await Feedback.findByPk(id);
+      
+      if(!feedback){
+        return  res.status(400).json({message:"Feedback not Found"});
+      }
+
+      feedback.vote+=1;
+      await feedback.save();
+
+      res.status(200).json({message:"Vote upldated Successfully"})
+
+    }catch(err){
+      console.log(err);
+      res.status(500).json({
+        message:"Error in upvoting",
+        error:err.message
+      })
+    }
+  }

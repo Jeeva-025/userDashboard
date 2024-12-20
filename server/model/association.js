@@ -3,7 +3,7 @@ import Module from "./Module.js";
 import Platform from "./Platform.js";
 import Tag from "./Tag.js";
 
-// Define the many-to-many associations
+
 Feedback.belongsToMany(Platform, { through: "FeedbackPlatforms", foreignKey: "feedbackId" });
 Feedback.belongsToMany(Module, { through: "FeedbackModules", foreignKey: "feedbackId" });
 Feedback.belongsToMany(Tag, { through: "FeedbackTags", foreignKey: "feedbackId" });

@@ -5,6 +5,7 @@ import {persist, devtools} from "zustand/middleware";
 
 const userStore=(set)=>({
   users:[],
+  feedbacks:[],
   userEmail: null,  
   fetchUser: async()=>{
     try{
@@ -69,8 +70,61 @@ const userStore=(set)=>({
 
   logout: ()=>{
     set({ userEmail: null });
+  },
+
+  fetchFeedbacks:async()=>{
+    try{
+      const response = await axios.get('http://localhost:8080/api/feedback');
+      set({feedbacks:response.data})
+    }catch(err){
+      console.log(err);
+      throw err;
+    }
+  },
+
+    addFeedback:async(formData)=>{
+      try{
+        const response = await axios.post('http://localhost:8080/api/feedback', formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        set((state) => ({ users: [...state.feedbacks, response.data] }));
+
+      }catch(err){
+        console.log(err);
+        throw err;
+      }
+    },
+    deleteFeedback:async(id)=>{
+      try{
+        const response= await axios.delete(`http://localhost:8080/api/feedback/${id}`)
+        set((state)=>({
+          feedbacks:state.feedbacks.filter(data=> data.id!==id)
+        }))
+
+      }catch(error){
+        console.log(err)
+        throw err;
+      }
+    },
+    incrementVote:async(id)=>{
+      try{
+        const response =await axios.put(`http://localhost:8080/api/feedback/${id}/vote`)
+        if (response.status === 200) {
+          set((state) => ({
+              feedbacks: state.feedbacks.map((data) =>
+                  data.id === id ? { ...data, vote: data.vote + 1 } : data
+              ),
+          }));
+      }
+      }catch(err){
+        console.log(err);
+        throw err;
+      }
+    }
   }
-})
+)
 
 const useUserStore=create(
     devtools(

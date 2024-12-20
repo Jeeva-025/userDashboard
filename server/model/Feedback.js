@@ -16,17 +16,14 @@ const Feedback = sequelize.define("Feedback", {
     type: DataTypes.TEXT,
     allowNull: false,
   },
-  platforms: {
-    type: DataTypes.JSON,  // Array of platform IDs
+  filename: {
+    type: DataTypes.STRING,  // Optional field
     allowNull: true,
   },
-  modules: {
-    type: DataTypes.JSON,  // Array of module IDs
-    allowNull: true,
-  },
-  tags: {
-    type: DataTypes.JSON,  // Array of tag IDs
-    allowNull: true,
+  vote: {
+    type: DataTypes.INTEGER,  // Default value of 0
+    allowNull: false,
+    defaultValue: 0,
   },
 }, {
   timestamps: true,

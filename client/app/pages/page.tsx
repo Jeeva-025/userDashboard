@@ -3,7 +3,7 @@
     import useUserStore from "../../store.js";
     import { useEffect, useState } from 'react';
     import Adduser from '../../components/Adduser.js';
-    import Authenticate from '../../components/Authenticate.js';
+    
     import Edit from '../../components/Edit.js';
     import { useRouter } from "next/navigation.js";
  
@@ -13,32 +13,28 @@
     const UsersList = () => {
       
       const [isModalOpen, setIsModalOpen] = useState(false);
-      
       const [searchQuery, setSearchQuery] = useState(""); 
       const [editId, setEditId]=useState(null);
       const[editContent, setEditContent]=useState({});
+
+
+
       const data=useUserStore((state)=> state.users);
       const useremail=useUserStore((state)=> state.userEmail);
       const logout=useUserStore((state)=> state.logout)
+      const deleteUser=useUserStore((state)=> state.deleteUser);
+      const fetchUser= useUserStore((state)=> state.fetchUser);
     
       
       const router = useRouter();
-      const deleteUser=useUserStore((state)=> state.deleteUser);
       
-      const fetchUser= useUserStore((state)=> state.fetchUser);
       
-  
-  
-      const filteredUsers= data.filter(user =>user.username.toLowerCase().includes(searchQuery.toLowerCase()));
-      
-  
       useEffect(()=>{
           fetchUser();
       },[])
+
+      const filteredUsers= data.filter(user =>user.username.toLowerCase().includes(searchQuery.toLowerCase()));
      
-  
-      
-  
   
      const handleDelete=(userId)=>{
     deleteUser(userId);

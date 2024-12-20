@@ -17,7 +17,7 @@ const Adduser = ({setIsModalOpen}) => {
             alert("Enter proper email");
             return;
         } 
-       console.log(newUser);
+       
         addUser(newUser)
         
         setIsModalOpen(false); 

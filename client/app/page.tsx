@@ -15,7 +15,7 @@ const AppPage = () => {
       router.push("/pages"); // Redirect to the user management page
     }
   }, [userEmail, router]);
-  console.log(userEmail)
+
 
 
   return (
