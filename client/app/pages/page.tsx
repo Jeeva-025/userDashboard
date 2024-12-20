@@ -34,6 +34,7 @@
       },[])
 
       const filteredUsers= data.filter(user =>user.username.toLowerCase().includes(searchQuery.toLowerCase()));
+      console.log(data);
      
   
      const handleDelete=(userId)=>{

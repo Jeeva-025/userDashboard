@@ -15,6 +15,7 @@ const page = () => {
   const incrementVote=useUserStore((state)=> state.incrementVote);
   
   
+  console.log(feedbacks);
 
     
 
@@ -30,7 +31,7 @@ const page = () => {
 
     useEffect(()=>{
       fetchFeebacks();
-    },[feedbacks])
+    },[])
     
 
 
