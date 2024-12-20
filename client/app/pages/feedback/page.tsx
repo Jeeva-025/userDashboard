@@ -111,7 +111,7 @@ const page = () => {
              {/* Right section (Metadata and tags) */}
               <div className=" flex flex-col items-center justify-center   w-auto h-auto flex-shrink-0 ">
                 <div>{data.vote}</div>
-              <div className="px-4 py-2 bg-gray-200 text-gray-600 rounded-md text-sm font-medium cursor-pointer transition duration-300 ease-in-out transform hover:bg-indigo-600 hover:text-white hover:scale-105" onClick={()=>handleVote(data.id)}>Votes</div>
+              <button className="px-4 py-2 bg-gray-200 text-gray-600 rounded-md text-sm font-medium cursor-pointer transition duration-300 ease-in-out transform hover:bg-indigo-600 hover:text-white hover:scale-105" onClick={()=>handleVote(data.id)}>Votes</button>
             </div>
           </div>
 

@@ -16,10 +16,12 @@
       const [searchQuery, setSearchQuery] = useState(""); 
       const [editId, setEditId]=useState(null);
       const[editContent, setEditContent]=useState({});
+      const[data, setData]=useState()
 
 
 
-      const data=useUserStore((state)=> state.users);
+      const users=useUserStore((state)=> state.users);
+      
       const useremail=useUserStore((state)=> state.userEmail);
       const logout=useUserStore((state)=> state.logout)
       const deleteUser=useUserStore((state)=> state.deleteUser);
@@ -27,14 +29,21 @@
     
       
       const router = useRouter();
+      console.log(data);
+      console.log(users)
       
       
       useEffect(()=>{
           fetchUser();
-      },[])
+          setData(users);
+      },[users])
 
-      const filteredUsers= data.filter(user =>user.username.toLowerCase().includes(searchQuery.toLowerCase()));
-      console.log(data);
+      const filteredUsers = users
+  ? users.filter(user =>
+      user.username && user.username.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  : [];
+      
      
   
      const handleDelete=(userId)=>{

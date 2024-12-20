@@ -39,6 +39,7 @@ const Editfeedback = ({ setEdit, editContent, setEditContent }) => {
     "Feature Request"
   ];
 
+
   const [report, setReport] = useState({
     title: editContent?.title || "",
     platforms: editContent?.platforms?.map(data=>platformsList.indexOf(data)+1) || [],
@@ -49,6 +50,21 @@ const Editfeedback = ({ setEdit, editContent, setEditContent }) => {
   });
 
   const [file, setFile] = useState(null);
+
+
+
+  const validation=()=>{
+    if(!report.title || !report.description ||
+        report.platforms.length===0 ||
+        report.modules.length===0 ||
+        report.tags.length===0
+    ){
+        alert("all fields are required")
+        return false;
+    }
+
+    return true;
+  }
 
   const handleSelectionChange = (type, index) => {
     const newArray = [...report[type]];
@@ -86,20 +102,22 @@ const Editfeedback = ({ setEdit, editContent, setEditContent }) => {
       
     }
     ;
-    
+    if(validation()){
     await updateFeedback(editContent.id,formData);
     fetchFeedbacks();
-    
     setReport({
-      title: "",
-      platform: [],
-      module: [],
-      description: "",
-      tag: [],
-      vote: 0
-    });
-    setEditContent();
-    setEdit(false);
+        title: "",
+        platform: [],
+        module: [],
+        description: "",
+        tag: [],
+        vote: 0
+      });
+      setEditContent();
+      setEdit(false);
+    }
+    
+    
   };
 
   return (

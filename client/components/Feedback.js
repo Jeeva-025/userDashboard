@@ -68,6 +68,19 @@ const Feedback = ({ setShowFeedback }) => {
   };
 
 
+  const validation=()=>{
+    if(!report.title || !report.description ||
+        report.platforms.length===0 ||
+        report.modules.length===0 ||
+        report.tags.length===0
+    ){
+        alert("all fields are required")
+        return false;
+    }
+
+    return true;
+  }
+
 
   
   const handleSubmit = async (e) => {
@@ -83,13 +96,12 @@ const Feedback = ({ setShowFeedback }) => {
     
     if (file) {
       formData.append('attachment', file);
-      setReport({...report, attachment : file}) 
-    }
-    ;
+     
+    };
     
+    if(validation()){
     await addFeedback(formData);
     fetchFeedbacks();
-    
     setReport({
       title: "",
       platform: [],
@@ -99,6 +111,9 @@ const Feedback = ({ setShowFeedback }) => {
       vote: 0
     });
     setShowFeedback(false);
+    }
+    
+    
   };
 
   return (
