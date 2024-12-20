@@ -1,5 +1,5 @@
 import express from 'express';
-import { createFeedback, deleteFeedback, upVote, getAllFeedback } from '../controller/Feedback.js';
+import { createFeedback, deleteFeedback, upVote, getAllFeedback, updateFeedback } from '../controller/Feedback.js';
 import multer from 'multer';
 
 
@@ -24,5 +24,6 @@ router.get('/',getAllFeedback);
 router.post('/',upload.single('attachment'),createFeedback)
 router.delete('/:id',deleteFeedback);
 router.put('/:id/vote', upVote);
+router.put('/:id',upload.single('attachment'), updateFeedback);
 
 export default router;

@@ -122,6 +122,20 @@ const userStore=(set)=>({
         console.log(err);
         throw err;
       }
+    },
+
+    updateFeedback:async(id, formData)=>{
+      try{
+        const response= await axios.put(`http://localhost:8080/api/feedback/${id}`,formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+
+      }catch(err){
+        console.log(err);
+        throw err;
+      }
     }
   }
 )

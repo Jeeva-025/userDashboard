@@ -5,7 +5,6 @@ import Tag from "../model/Tag.js";
 
 export const getAllFeedback= async(req, res)=>{
     
-
     try{
         const feedbacks = await Feedback.findAll({
             include: [
@@ -50,17 +49,35 @@ export const getAllFeedback= async(req, res)=>{
 }
 
 
+
+
+
+
 export const createFeedback = async (req, res) => {
     let { title, description, platforms, modules, tags } = req.body;
     const file=req.file;
 
 
-    if (typeof platforms === 'string') {
-      platforms = platforms.split(',').map(Number);
-  modules = modules.split(',').map(Number);
-  tags = tags.split(',').map(Number);
-    }
+    // For platforms
+if (typeof platforms === 'string' && platforms !== '') {
+  platforms = platforms.split(',').map(Number);
+} else {
+  platforms = []; // Ensure platforms is an empty array when it's an empty string
+}
 
+// For modules
+if (typeof modules === 'string' && modules !== '') {
+  modules = modules.split(',').map(Number);
+} else {
+  modules = []; // Ensure modules is an empty array when it's an empty string
+}
+
+// For tags
+if (typeof tags === 'string' && tags !== '') {
+  tags = tags.split(',').map(Number);
+} else {
+  tags = []; // Ensure tags is an empty array when it's an empty string
+}
   
     try {
       // Create the feedback entry
@@ -109,6 +126,86 @@ export const createFeedback = async (req, res) => {
   };
   
 
+
+
+
+  export const updateFeedback=async(req, res)=>{
+    const{id}=req.params;
+    let{title, description, platforms, modules, tags}=req.body;
+    const file=req.file;
+
+    // For platforms
+if (typeof platforms === 'string' && platforms !== '') {
+  platforms = platforms.split(',').map(Number);
+} else {
+  platforms = []; // Ensure platforms is an empty array when it's an empty string
+}
+
+// For modules
+if (typeof modules === 'string' && modules !== '') {
+  modules = modules.split(',').map(Number);
+} else {
+  modules = []; // Ensure modules is an empty array when it's an empty string
+}
+
+// For tags
+if (typeof tags === 'string' && tags !== '') {
+  tags = tags.split(',').map(Number);
+} else {
+  tags = []; // Ensure tags is an empty array when it's an empty string
+}
+
+
+    try{
+      const feedback= await Feedback.findByPk(id);
+
+      if(!feedback){
+        return res.status(404).json({message:"Feedback is not found"});
+      }
+
+      feedback.title=title || feedback.title;
+      feedback.description= description || feedback.description;
+      feedback.filename = file ? file.filename : feedback.filename;
+      await feedback.save();
+
+      if(platforms && platforms.length>0){
+        const platformEntries = await Platform.findAll({ where: { id: platforms } });
+        await feedback.setPlatforms(platformEntries);
+      }else{
+        await feedback.setPlatforms([])
+      }
+
+      if(modules && modules.length>0){
+        const moduleEntries = await Module.findAll({ where: { id: modules } });
+       await feedback.setModules(moduleEntries);
+     }else{
+       await feedback.setModules([])
+     }
+
+     if(tags && tags.length>0){
+     const tagEntries = await Tag.findAll({ where: { id: tags } });
+     await feedback.setTags(tagEntries);
+   }else{
+     await feedback.setTags([])
+   }
+
+
+   return res.status(200).json({ message: "Feedback updated successfully" });
+    }catch(err){
+      console.log(err);
+      res.status(500).json({
+        message:"Error in updating feedback",
+        error:err.message
+      })
+    }
+  }
+
+
+
+
+
+
+
   export  const deleteFeedback= async(req, res)=>{
     const{id}=req.params;
     try{
@@ -116,7 +213,7 @@ export const createFeedback = async (req, res) => {
       const feedback =await Feedback.findByPk(id);
 
       if(!feedback){
-        res.status(400).json({message:"Feedback does not found"});
+        res.status(404).json({message:"Feedback does not found"});
       }
 
       await feedback.setPlatforms([]);
@@ -147,7 +244,7 @@ export const createFeedback = async (req, res) => {
       const feedback= await Feedback.findByPk(id);
       
       if(!feedback){
-        return  res.status(400).json({message:"Feedback not Found"});
+        return  res.status(404).json({message:"Feedback not Found"});
       }
 
       feedback.vote+=1;

@@ -13,8 +13,8 @@ import useUserStore from '@/store';
 
 
 
-const Feedback = ({ setShowFeedback }) => {
-  const addFeedback = useUserStore((state)=> state.addFeedback)
+const Editfeedback = ({ setEdit, editContent, setEditContent }) => {
+  const updateFeedback = useUserStore((state)=> state.updateFeedback)
   const fetchFeedbacks = useUserStore((state)=> state.fetchFeedbacks)
 
 
@@ -40,12 +40,12 @@ const Feedback = ({ setShowFeedback }) => {
   ];
 
   const [report, setReport] = useState({
-    title: "",
-    platforms: [],
-    modules: [],
-    description: "",
-    tags: [],
-    vote: 0
+    title: editContent?.title || "",
+    platforms: editContent?.platforms?.map(data=>platformsList.indexOf(data)+1) || [],
+    modules: editContent?.modules.map(data=>modulesList.indexOf(data)+1),
+    description: editContent?.description || "",
+    tags: editContent?.tags?.map(data=>tagsList.indexOf(data)+1) || [],
+    vote: editContent?.vote
   });
 
   const [file, setFile] = useState(null);
@@ -79,15 +79,15 @@ const Feedback = ({ setShowFeedback }) => {
     formData.append('platforms', report.platforms);
     formData.append('modules', report.modules);
     formData.append('tags', report.tags);
-    formData.append('vote', report.vote);
+    
     
     if (file) {
       formData.append('attachment', file);
-      setReport({...report, attachment : file}) 
+      
     }
     ;
     
-    await addFeedback(formData);
+    await updateFeedback(editContent.id,formData);
     fetchFeedbacks();
     
     setReport({
@@ -98,7 +98,8 @@ const Feedback = ({ setShowFeedback }) => {
       tag: [],
       vote: 0
     });
-    setShowFeedback(false);
+    setEditContent();
+    setEdit(false);
   };
 
   return (
@@ -107,7 +108,7 @@ const Feedback = ({ setShowFeedback }) => {
         {/* Close Button */}
         <button
           className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 transition"
-          onClick={() => setShowFeedback(false)}
+          onClick={() => setEdit(false)}
         >
           <IoClose size={24} />
         </button>
@@ -231,4 +232,4 @@ const Feedback = ({ setShowFeedback }) => {
   );
 };
 
-export default Feedback;
+export default Editfeedback;
