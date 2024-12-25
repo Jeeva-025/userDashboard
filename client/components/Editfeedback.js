@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
-import { IoClose, IoChatbubbleEllipses } from 'react-icons/io5';
-import { FiEdit3, FiLayers, FiList } from 'react-icons/fi';
-import { FaAndroid, FaApple, FaGlobe, FaProjectDiagram } from 'react-icons/fa';
-import { MdNotificationsActive } from 'react-icons/md';
+import { IoClose,  } from 'react-icons/io5';
+import { FiEdit3, FiLayers,  } from 'react-icons/fi';
+import { FaAndroid, FaApple, FaGlobe,  } from 'react-icons/fa';
+
+import { AiOutlineBulb } from 'react-icons/ai';
+
+
+import useUserStore from '@/store';
 import { AiOutlineFileText, AiOutlinePaperClip } from 'react-icons/ai';
 import { BiTag } from 'react-icons/bi';
-import useUserStore from '@/store';
+import { FaBullhorn , FaBug } from 'react-icons/fa';
+import { AiOutlineProject, AiOutlineStar } from 'react-icons/ai';
+import { MdTask, MdOutlineNotificationsActive } from 'react-icons/md';
+import { FiMail  } from 'react-icons/fi';
+import { BiChat } from 'react-icons/bi';
 
 
 
@@ -115,10 +123,14 @@ const Editfeedback = ({ setEdit, editContent, setEditContent }) => {
       });
       setEditContent();
       setEdit(false);
-    }
+    }};
+
+
+    const [dropdowns, setDropdowns] = useState({ platforms: false, modules: false });
     
-    
-  };
+      const toggleDropdown = (type) => {
+        setDropdowns((prev) => ({ ...prev, [type]: !prev[type] }));
+      };
 
   return (
     <div className="min-h-screen bg-transparent flex items-center justify-center">
@@ -133,10 +145,10 @@ const Editfeedback = ({ setEdit, editContent, setEditContent }) => {
 
         <form className="flex flex-col space-y-6" onSubmit={(e) => handleSubmit(e)}>
           {/* Title */}
-          <h2 className="font-semibold text-2xl text-center text-gray-800">Bug Report</h2>
+          <h2 className="font-semibold text-2xl text-center text-gray-800">Modify Bug Report</h2>
           <div>
             <label className="flex items-center space-x-2 text-gray-600 text-sm">
-              <FiEdit3 /> <span>Title*</span>
+              <FiEdit3 size={24}/> <span>Title*</span>
             </label>
             <input
               value={report.title}
@@ -147,51 +159,74 @@ const Editfeedback = ({ setEdit, editContent, setEditContent }) => {
           </div>
 
           {/* Platform */}
-          <div>
-            <label className="flex items-center space-x-2 text-gray-600 text-sm">
-              <FaGlobe /> <span>Platform</span>
-            </label>
-            <div className="flex space-x-4 mt-2">
-              {platformsList.map((platform, index) => (
-                <div key={index} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    id={`platform-${index+1}`}
-                    checked={report.platforms.includes(index+1)}
-                    onChange={() => handleSelectionChange("platforms", index)}
-                    className="text-indigo-600"
-                  />
-                  <label htmlFor={`platform-${index+1}`}>{platform}</label>
-                </div>
-              ))}
-            </div>
-          </div>
+          <div className="relative">
+                      <label className="flex items-center space-x-2 text-gray-600 text-sm">
+                        <FaGlobe size={24}/> <span> Platform*</span>
+                      </label>
+                      <div
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 text-gray-800 cursor-pointer"
+                        onClick={() => toggleDropdown('platforms')}
+                      >
+                        {report.platforms.length > 0 ? report.platforms.map(ind=>platformsList[ind-1]).join(', ') : "Select Platform"}
+                      </div>
+                      {dropdowns.platforms && (
+                        <div className=" bg-white border border-gray-300 rounded-lg shadow-lg">
+                          {platformsList.map((platform, index) => (
+                            <div
+                              key={index}
+                              className={` flex px-4 py-2 cursor-pointer ${
+                                report.platforms.includes(index+1) ? 'bg-indigo-100 text-indigo-600' : 'hover:bg-gray-100'
+                              }`}
+                              onClick={() => handleSelectionChange('platforms', index)}
+                            >
+                               {platform === 'Android' && <FaAndroid className="mr-2" />}
+              {platform === 'iOS' && <FaApple className="mr-2" />}
+              {platform === 'Web' && <FaGlobe className="mr-2" />}
+              
+                              {platform}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
 
           {/* Module */}
-          <div>
-            <label className="flex items-center space-x-2 text-gray-600 text-sm">
-              <FiLayers /> <span>Module</span>
-            </label>
-            <div className="flex space-x-4 mt-2">
-              {modulesList.map((module, index) => (
-                <div key={index} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    id={`module-${index+1}`}
-                    checked={report.modules.includes(index+1)}
-                    onChange={() => handleSelectionChange("modules", index)}
-                    className="text-indigo-600"
-                  />
-                  <label htmlFor={`module-${index+1}`}>{module}</label>
-                </div>
-              ))}
-            </div>
-          </div>
+         <div className="relative">
+                     <label className="flex items-center space-x-2 text-gray-600 text-sm">
+                       <FiLayers size={24} /> <span> Module*</span>
+                     </label>
+                     <div
+                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 text-gray-800 cursor-pointer"
+                       onClick={() => toggleDropdown('modules')}
+                     >
+                       {report.modules.length > 0 ? report.modules.map(ind=> modulesList[ind-1]).join(', ') : "Select Module"}
+                     </div>
+                     {dropdowns.modules && (
+                       <div className=" bg-white border border-gray-300 rounded-lg shadow-lg">
+                         {modulesList.map((module, index) => (
+                           <div
+                             key={index}
+                             className={` flex px-4 py-2 cursor-pointer ${
+                               report.modules.includes(index+1) ? 'bg-indigo-100 text-indigo-600' : 'hover:bg-gray-100'
+                             }`}
+                             onClick={() => handleSelectionChange('modules', index)}
+                           >
+                             {module === 'Channel' && <FaBullhorn className="mr-2" />}
+             {module === 'Project' && <AiOutlineProject  className="mr-2" />}
+             {module === 'Tasks' && <MdTask className="mr-2" />}
+             {module === 'Chat' && <BiChat className="mr-2" />}
+             {module === 'Alert' && <MdOutlineNotificationsActive className="mr-2" />}
+             {module}
+                           </div>
+                         ))}
+                       </div>
+                     )}
+                   </div>
 
           {/* Description */}
           <div>
             <label className="flex items-center space-x-2 text-gray-600 text-sm">
-              <AiOutlineFileText /> <span>Description</span>
+              <AiOutlineFileText  size={24}/> <span>Description</span>
             </label>
             <textarea
               placeholder="Add additional details here"
@@ -204,7 +239,7 @@ const Editfeedback = ({ setEdit, editContent, setEditContent }) => {
           {/* Attachment */}
           <div>
             <label className="flex items-center space-x-2 text-gray-600 text-sm">
-              <AiOutlinePaperClip /> <span>Attachment (optional)</span>
+              <AiOutlinePaperClip size={24} /> <span>Attachment (optional)</span>
             </label>
             <input
               name="attachment"
@@ -217,25 +252,36 @@ const Editfeedback = ({ setEdit, editContent, setEditContent }) => {
 
           {/* Tags */}
           <div>
-            <label className="flex items-center space-x-2 text-gray-600 text-sm">
-              <BiTag /> <span>Tags</span>
-            </label>
-            <div className="flex space-x-4 mt-2">
-              {tagsList.map((tag, index) => (
-                <div key={index} className="flex items-center space-x-2">
-                  
-                  <input
-                    type="checkbox"
-                    id={`tag-${index+1}`}
-                    checked={report.tags.includes(index+1)}
-                    onChange={() => handleSelectionChange("tags", index)}
-                    className="text-indigo-600"
-                  />
-                  <label htmlFor={`tag-${index+1}`}>{tag}</label>
-                </div>
-              ))}
-            </div>
-          </div>
+                      <label className="flex items-center space-x-2 text-gray-600 text-sm">
+                        <BiTag size={24} /> <span>Tags</span>
+                      </label>
+                      <div className="flex space-x-4 mt-2">
+                        {tagsList.map((tag, index) => (
+                          <div key={index} className="flex items-center space-x-2">
+                            <div
+                              
+                              
+                              onClick={() => handleSelectionChange('tags', index)}
+          
+                              className={` flex items-center px-4 py-2 rounded-lg font-medium transition-all duration-200 shadow-sm ${
+                                report.tags.includes(index+1)
+                                  ? 'bg-indigo-500 text-white shadow-lg scale-105' // Selected state
+                                  : 'bg-gray-100 text-gray-800 hover:bg-blue-200 hover:text-blue-800 hover:shadow-md cursor-pointer' // Default and hover styles
+                              }`}
+                            >
+                               {tag === 'Feedback' && <FiMail  className="mr-2" />}
+              {tag === 'Bug Report' && <FaBug size={27} className="mr-2" />}
+              {tag === 'Idea' && <AiOutlineBulb  className="mr-2" />}
+              {tag === 'Feature Request' && <AiOutlineStar size={34} className="mr-2" />}
+              
+              {tag}
+          
+                            </div>
+                           
+                          </div>
+                        ))}
+                      </div>
+                    </div>
 
           {/* Submit Button */}
           <button
