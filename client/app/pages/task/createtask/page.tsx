@@ -1,7 +1,8 @@
 "use client"
 import React from 'react';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation'; // Import useRouter
+import { useRouter } from 'next/navigation'; 
+import Link from 'next/link';
 
 const page = () => {
 
@@ -17,12 +18,14 @@ const page = () => {
     const router=useRouter();
 
 
-    console.log(project)
+
 
     
   return (
     <div className="p-6 h-screen bg-blue-50">
+        
         <h1 className="text-3xl font-bold mb-6">Create Task</h1>
+        
 
         <form className="mt-7 p-4 border shadow-md bg-[#f8fafc] rounded-lg">
             <div className="flec flex-col space-y-7">

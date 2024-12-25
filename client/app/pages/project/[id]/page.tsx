@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { FaLightbulb } from "react-icons/fa"; 
 import { BiSolidPieChartAlt } from "react-icons/bi";
 import { BsChatRightText } from "react-icons/bs";
+import Link from 'next/link';
 
 const page = () => {
  
@@ -37,7 +38,8 @@ const page = () => {
       <div className=" flex justify-between mb-6">
         <h1 className="text-3xl font-bold ">Addodle</h1>
         <div className="flex space-x-3">
-        <button className=" bg-blue-600 border border-blue-600 rounded-xl px-4 py-1">Assign Task</button>
+          <Link href="/pages/task/createtask">
+        <button className=" bg-blue-600 border border-blue-600 rounded-xl px-4 py-1">Assign Task</button></Link>
 
         <div className="flex flex-col items-center space-y-2">
           <h3>Time Spent</h3>
