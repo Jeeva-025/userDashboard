@@ -2,11 +2,15 @@ import { create } from "zustand";
 import axios from "axios";
 
 import {persist, devtools} from "zustand/middleware";
+import project from "./app/pages/project/page";
 
 const userStore=(set)=>({
   users:[],
   feedbacks:[],
-  userEmail: null,  
+  projects:[],
+  auths:[],
+  tasks:[],
+  user: null,  
   fetchUser: async()=>{
     try{
       const response= await axios.get("http://localhost:8080/api/user");
@@ -59,7 +63,7 @@ const userStore=(set)=>({
       
       const response = await axios.post(`http://localhost:8080/api/user/${sign}`, data);
       
-      set({ userEmail:  response.data.user.email});
+      set({ user:  response.data.user});
       return response.data;
     }catch(err){
       console.log(err.mssage);
@@ -68,8 +72,8 @@ const userStore=(set)=>({
     
   },
 
-  logout: ()=>{
-    set({ userEmail: null });
+  logout:()=>{
+    set({ user: null });
   },
 
   fetchFeedbacks:async()=>{
@@ -136,9 +140,92 @@ const userStore=(set)=>({
         console.log(err);
         throw err;
       }
-    }
-  }
-)
+    },
+
+    getAllProject:async()=>{
+      try{
+        const response =await axios.get("http://localhost:8080/api/project");
+        set({projects:response.data})
+      }catch(err){
+        console.log(err);
+        throw err;
+      }
+    },
+
+    createProject:async(data)=>{
+      try{
+        const response =await axios.post("http://localhost:8080/api/project", data);
+        set((state) => ({ projects: [...state.projects, response.data] }));
+
+      }catch(err){
+        console.log(err);
+        throw err;
+      }
+    },
+
+    deleteProject:async(id)=>{
+      try{
+        const response =await axios.patch(`http://localhost:8080/api/project/${id}`);
+      }catch(err){
+        console.log(err);
+        throw err;
+      }
+    },
+
+    getAllTasks:async()=>{
+      try{
+        const response= await axios.get("http://localhost:8080/api/task")
+        set({tasks:response.data})
+      }catch(err){
+        console.log(err);
+        throw err;
+      }
+    },
+     createTask:async(data)=>{
+      try{
+        const response =await axios.post("http://localhost:8080/api/task", data)
+
+      }catch(err){
+        console.log(err);
+        throw err;
+      }
+     },
+
+     getAllAuth:async()=>{
+      try{
+        const response = await axios.get("http://localhost:8080/api/task/auth")
+        set({auths:response.data})
+
+      }catch(err){
+        console.log(err);
+        throw err;
+      }},
+
+
+      deleteTask:async(id)=>{
+        try{
+          const response =await axios.patch(`http://localhost:8080/api/task/${id}`);
+        }catch(err){
+          console.log(err);
+          throw err;
+        }
+      },
+
+      updateProject:async(data)=>{
+        try{
+          const response =await axios.put(`http://localhost:8080/api/project/${data.id}`, data);
+          
+        }catch(err){
+          console.log(err);
+          throw err;
+        }
+      }
+   
+
+    
+
+
+  })
 
 const useUserStore=create(
     devtools(

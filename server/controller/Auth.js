@@ -26,11 +26,14 @@ export const UserRegister = async (req, res) => {
       email,
       password: hashedPassword,
     });
+    
+    const userResponse = user.toJSON();
+    delete userResponse.password;
 
     // Generate JWT token
     const token = jwt.sign({ id: user.id }, process.env.JWT, { expiresIn: "7 years" });
 
-    return res.status(201).json({ token, user });
+    return res.status(201).json({ token, user: userResponse });
   } catch (error) {
     return res.status(500).json({ message: "An error occurred during registration", error: error.message });
   }

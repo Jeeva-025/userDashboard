@@ -1,26 +1,25 @@
 "use client"
 import React, { useEffect } from 'react';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import useUserStore from '@/store';
+import { useRouter } from 'next/navigation'; 
 import Link from 'next/link';
-
+import { usePathname } from "next/navigation"; 
+import useUserStore from '@/store';
 
 const page = () => {
 
-    const user=useUserStore((state)=> state.user);
-    const createproject=useUserStore((state)=> state.createProject)
+    const pathname = usePathname(); 
+    const id = Number(pathname.split("/").pop()); 
+    console.log("Project ID:", id);
+
+    const createTask=useUserStore(state=> state.createTask);
+    const user=useUserStore(state=> state.user)
+    const getAllAuth= useUserStore(state=> state.getAllAuth);
+    const auths= useUserStore(state=> state.auths);
+
 
     const router=useRouter();
-    
 
-    useEffect(() => {
-        if (user) {
-            setProject((prev) => ({ ...prev, userid: user.id }));
-        }
-    }, [user]);
-    
-    
     const [project, setProject] = useState({
         title: "",
         type: "",
@@ -28,65 +27,72 @@ const page = () => {
         endDate: "",
         description:"",
         role: "",
-        userid:user&& user.id
+        assignerid:null,
+        assigneeid:null,
+        projectid:id,
 
+        
     });
+    useEffect(()=>{
+        if (user) {
+            setProject(prev => ({ ...prev, assignerid: user.id }));
+        }
+        getAllAuth();
+    },[])
 
-    const validate=()=>{
-        if(!project.title || !project.type ||
-            !project.description || !project.startDate ||
-            !project.endDate || !project.role || !project.userid
+
+    const validation=()=>{
+        if(!project.type || ! project.title || !project.description ||
+            !project.startDate ||  !project.endDate || !project.role || 
+            !project.assigneeid || !project.assignerid
         ){
-            alert("All fields are required")
+            alert("All fileds are required")
             return false;
         }
         return true;
     }
 
-    const handleSummit=async(e)=>{
-       e.preventDefault();
-       try{
-        if(validate()){
-        
-            createproject(project);
-            setProject({
-                title:"",
-                type:"",
-                description:"",
-                role:"",
-                startDate:"",
-                endDate:"",
-                userid:null
-            });
-            router.back();
-        }
-
-        }catch(err){
-            console.log(err)
-            alert(err.message)
-        }
-    }
-
-
-
     
-
-
    
+
+const handleSubmit=async()=>{
+    try{
+        if(validation()){
+     await createTask(project)
+     setProject({
+        title:"",
+        type:"",
+        description:"",
+        assigneeid:null,
+        startDate:"",
+        endDate:"",
+        projectid:17,
+        role:"",
+        assignerid: user&& user.id
+     })
+     router.back();
+        }
+    }catch(err){
+        console.log(err);
+        alert(err.message);
+    }
+}
+
 
     
   return (
     <div className="p-6 h-screen bg-blue-50">
-        <h1 className="text-3xl font-bold mb-6">Create Project</h1>
+        
+        <h1 className="text-3xl font-bold mb-6">Create Task</h1>
+        
 
-        <form  className="mt-7 p-4 border shadow-md bg-[#f8fafc] rounded-lg">
+        <form className="mt-7 p-4 border shadow-md bg-[#f8fafc] rounded-lg">
             <div className="flec flex-col space-y-7">
         <div className="flex justify-between space-x-4">
                     <div className="flex-grow">
-                        <label className="flex items-center space-x-2 text-gray-600 text-lg">Project Title</label>
+                        <label className="flex items-center space-x-2 text-gray-600 text-lg">Task Title</label>
                         <input
                             type="text"
-                            value={project.title}
                             placeholder="Enter Project Title"
                             className=" w-full px-4 py-3 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-indigo-400 text-gray-800"
                             onChange={(e) => setProject({ ...project, title: e.target.value })}
@@ -94,10 +100,9 @@ const page = () => {
                     </div>
 
                     <div className="flex-grow">
-                        <label className="flex items-center space-x-2 text-gray-600 text-lg">Project Type</label>
+                        <label className="flex items-center space-x-2 text-gray-600 text-lg">Task Type</label>
                         <input
                             type="text"
-                            value={project.type}
                             placeholder="Enter Project Type"
                             className=" w-full px-4 py-3 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-indigo-400 text-gray-800"
                             onChange={(e) => setProject({ ...project, type: e.target.value })}
@@ -108,7 +113,6 @@ const page = () => {
                         <label className="flex items-center space-x-2 text-gray-600 text-lg">Start Date</label>
                         <input
                             type="date"
-                            value={project.startDate}
                             className="px-4 py-3 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-indigo-400 text-gray-800"
                             onChange={(e) => setProject({ ...project, startDate: e.target.value })}
                         />
@@ -118,14 +122,13 @@ const page = () => {
                         <label className="flex items-center space-x-2 text-gray-600 text-lg">End Date</label>
                         <input
                             type="date"
-                            value={project.endDate}
                             className="px-4 py-3 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-indigo-400 text-gray-800"
                             onChange={(e) => setProject({ ...project, endDate: e.target.value })}
                         />
                     </div>
                 </div>
                 <div>
-                    <label className="flex items-center space-x-2 text-gray-600 text-lg">Project Description</label>
+                    <label className="flex items-center space-x-2 text-gray-600 text-lg">Task Description</label>
                     <textarea
               placeholder="Add additional details here"
               value={project.description}
@@ -136,7 +139,7 @@ const page = () => {
                 
 
                 <div className="flex-1">
-                        <label className="flex items-center space-x-2 text-gray-600 text-lg">Category</label>
+                        <label className="flex items-center space-x-2 text-gray-600 text-lg">Role</label>
                         <select
                             className="w-full px-4 py-3 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-indigo-400 text-gray-800"
                             value={project.role}
@@ -150,9 +153,25 @@ const page = () => {
                         </select>
                     </div>
 
+                    <div className="flex-1">
+    <label className="flex items-center space-x-2 text-gray-600 text-lg">Assign To</label>
+    <select
+        className="w-full px-4 py-3 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-indigo-400 text-gray-800"
+        value={project.assigneeid || ""}
+        onChange={(e) => setProject({ ...project, assigneeid: Number(e.target.value) })}
+    >
+        <option value="">Select Assignee</option>
+        {auths && auths.map((auth) => (
+            <option key={auth.id} value={auth.id}>
+                {auth.username}
+            </option>
+        ))}
+    </select>
+</div>
+
                     <div className=" flex justify-end space-x-6">
-                        <button onClick={(e)=>handleSummit(e)} className="text-white px-2 py-1 border rounded-lg bg-indigo-500 hover:scale-110">Create</button>
-                        <Link href={"/pages/project"}>
+                        <button onClick={(e)=> handleSubmit(e)} className="text-white px-2 py-1 border rounded-lg bg-indigo-500 hover:scale-110">Create</button>
+                        <Link href={"/pages/task"}>
                         <button
                         type="button"
                         className="text-white px-2 py-1 border rounded-lg bg-indigo-500 hover:scale-110" onClick={(e) => {

@@ -5,43 +5,66 @@ import { IoCreate } from 'react-icons/io5';
 import { FaHourglassStart } from 'react-icons/fa';
 import { IoDocumentTextOutline } from "react-icons/io5";
 import Link from 'next/link';
+import useUserStore from '@/store';
+import { useEffect } from 'react';
+import { IoClose } from 'react-icons/io5';
+import Editproject from '../../../components/Editproject.js'
+
 
 const project = () => {
+
+
+   const[isShowEdit, setIsShowEdit]=useState(false);
+   const[editContent, setEditContent]=useState();
    
 
-    const[projects, setProject]=useState([
-        {
-          id:1,
-         title:"Adoddle",
-         description:"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
-         time:"05 April 2023",
-         issues:14,
+    const data=useUserStore((state)=> state.projects);
+    const getAllProjects= useUserStore((state)=> state.getAllProject)
+    const deleteProject= useUserStore((state)=> state.deleteProject)
+    
 
-        },
-        {
-          id:2,
-            title:"Adoddle",
-            description:"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
-            time:"05 April 2023",
-            issues:14,
-           },
-           {
-            id:3,
-            title:"Adoddle",
-            description:"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
-            time:"05 April 2023",
-            issues:14,
-   
-           },
-           {
-            id:4,
-            title:"Adoddle",
-            description:"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
-            time:"05 April 2023",
-            issues:14,
-   
-           }
-    ]);
+
+    const activeProjects = data.filter((item) => item.status === "Active");
+
+
+    const projects = activeProjects.map((item) => {
+      const startDateStr = item.startDate; 
+      const endDateStr = item.endDate; 
+    
+      
+      const startDate = new Date(startDateStr);
+      const options = { day: '2-digit', month: 'long', year: 'numeric' };
+      const formattedStartDate = startDate.toLocaleDateString('en-GB', options);
+    
+      
+      const endDate = new Date(endDateStr);
+      const formattedEndDate = endDate.toLocaleDateString('en-GB', options);
+    
+      return {
+        ...item, 
+        startDate: formattedStartDate,
+        endDate: formattedEndDate,
+      };
+    });
+
+    console.log(projects);
+    useEffect(()=>{
+      getAllProjects();
+    } ,[data])
+
+    
+    const handleDelete=async(id)=>{
+      console.log(id);
+      await deleteProject(id);
+      await getAllProjects()
+    }
+
+    const handleEdit=(id)=>{
+     setIsShowEdit(true);
+     const newArr=activeProjects.find((item)=> item.id===id);
+     setEditContent(newArr);
+    }
+
 
 
 
@@ -56,38 +79,44 @@ const project = () => {
      
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {projects.map((project, index) => (
-          <Link key={index} href={`/pages/project/${project.id}`}>
-          <div
-            className="bg-white shadow-md rounded-lg p-4 border border-gray-200 flex flex-col justify-start"
-          >
-            <div className='flex justify-between'>
+          
+          <div key={index} className="bg-white shadow-md rounded-lg p-4 border border-gray-200 flex flex-col justify-start relative overflow-hidden">
+
+            <div className='flex p-2 justify-between'>
 
             <div className='flex justify-center items-center space-x-2 '>
-            <h2 className="text-lg font-semibold mb-2">{project.title}</h2>
-            
-                  <button className="text-gray-500 hover:text-gray-700 transition hover:scale-110">
-                    <IoCreate size={34} />
-                  </button>
-                
+              <Link  href={`/pages/project/${project.id}`}><h2 className="text-lg font-semibold ">{project.title}</h2></Link>
+
+              <button onClick={()=>handleEdit(project.id)} className="text-gray-500 hover:text-gray-700 transition mb-1 hover:scale-110">
+              <IoCreate size={34} /></button>
             </div>
 
-            <div className="py-1 px-2 border text-red-600 border-red-100 rounded-md bg-red-200">Offtrack</div>
+            <div className=" flex flex-wrap space-x-2 items-center">
+            <div className="py-1 px-2 border text-red-600 border-red-100 rounded-md 
+            bg-red-200">Offtrack</div>
+            <button  onClick={()=> handleDelete(project.id)} className=" hover:scale-105 "> <IoClose size={34}/> </button>
             </div>
 
+            </div>
             <hr className="border-t-3 border-gray-500 my-2" />
             <p className="text-sm px-2 text-gray-600">{project.description}</p>
             <span className="text-red-400 mt-5 flex justify-start space-x-1">
                       <FaHourglassStart size={34} />
-                     <p className='text-lg'>{project.time}</p> 
+                     <p className='text-lg'>{project.startDate}</p> 
              </span>
              <span className="text-gray-500 mt-5 flex justify-end items-center space-x-1">
                       <IoDocumentTextOutline size={34} />
                      <p className='text-md'>{project.issues} issues</p> 
              </span>
           </div>
-          </Link>
+          
         ))}
       </div>
+      {isShowEdit&&
+      <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
+     
+     <Editproject editContent={editContent} setEditContent={setEditContent} setIsShowEdit={setIsShowEdit}/>
+      </div>}
     </div>
     
   )

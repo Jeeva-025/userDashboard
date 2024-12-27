@@ -22,15 +22,14 @@
 
       const users=useUserStore((state)=> state.users);
       
-      const useremail=useUserStore((state)=> state.userEmail);
+      const user=useUserStore((state)=> state.user);
       const logout=useUserStore((state)=> state.logout)
       const deleteUser=useUserStore((state)=> state.deleteUser);
       const fetchUser= useUserStore((state)=> state.fetchUser);
     
       
       const router = useRouter();
-      console.log(data);
-      console.log(users)
+      
       
       
       useEffect(()=>{
@@ -60,10 +59,10 @@
      }
   
      useEffect(()=>{
-       if(!useremail){
+       if(!user){
         router.push("/")
        }
-     },[useremail])
+     },[user])
   
      
      

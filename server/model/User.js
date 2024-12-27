@@ -2,6 +2,7 @@ import {  DataTypes } from 'sequelize';
 import sequelize from './db.js'; 
 import Role from './Role.js';
 
+
 const User = sequelize.define('User', {
   
   id: {
@@ -48,6 +49,7 @@ const User = sequelize.define('User', {
   tableName: 'users',  
   timestamps: true,     
 });
+
 
 User.belongsTo(Role, { foreignKey: 'roleId', as: 'role' });
 Role.hasMany(User, { foreignKey: 'roleId' });
