@@ -12,6 +12,9 @@ const Editproject = ({editContent, setIsShowEdit, setEditContent}) => {
 
     const user=useUserStore((state)=> state.user);
     const updateProject=useUserStore(state=> state.updateProject);
+    const getAllProjects=useUserStore(state=> state.getAllProject);
+    const data=useUserStore((state)=> state.projects);
+
     
 
     const router=useRouter();
@@ -57,7 +60,7 @@ const Editproject = ({editContent, setIsShowEdit, setEditContent}) => {
        try{
         if(validate()){
         
-            updateProject(project);
+            await updateProject(project);
             setProject({
                 id:null,
                 title:"",
@@ -68,6 +71,7 @@ const Editproject = ({editContent, setIsShowEdit, setEditContent}) => {
                 endDate:"",
                 userid:null
             });
+            await getAllProjects();
            
             setIsShowEdit(false);
         }
@@ -78,7 +82,7 @@ const Editproject = ({editContent, setIsShowEdit, setEditContent}) => {
         }
     }
 
-    console.log(project);
+    console.log(data);
 
     
 
