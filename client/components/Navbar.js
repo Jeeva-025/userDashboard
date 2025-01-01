@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FaUsers, FaCommentDots, FaProjectDiagram } from "react-icons/fa"; // Import React Icons
-import { AiOutlineUnorderedList } from "react-icons/ai";
+import { AiOutlineUnorderedList, AiOutlineBarChart } from "react-icons/ai";
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -49,6 +49,15 @@ const Navbar = () => {
             }`}
           >
             <AiOutlineUnorderedList className="text-xl" /> {/* Feedback Icon */} <p className="text-xs">Task</p>
+          </Link>
+        </li> 
+        <li>
+          <Link
+            href="/pages/analytics"
+            className={"flex p-2 rounded flex-col items-center justify-center hover:bg-gray-800"
+            }
+          >
+            <AiOutlineBarChart className="text-xl" /> {/* Feedback Icon */} <p className="text-xs">Task</p>
           </Link>
         </li> 
       </ul>
