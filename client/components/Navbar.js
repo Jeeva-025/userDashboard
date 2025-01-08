@@ -57,7 +57,7 @@ const Navbar = () => {
             className={"flex p-2 rounded flex-col items-center justify-center hover:bg-gray-800"
             }
           >
-            <AiOutlineBarChart className="text-xl" /> {/* Feedback Icon */} <p className="text-xs">Task</p>
+            <AiOutlineBarChart className="text-xl" />  <p className="text-xs">Analyze</p>
           </Link>
         </li> 
       </ul>
