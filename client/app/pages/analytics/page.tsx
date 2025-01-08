@@ -2,11 +2,11 @@
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import useUserStore from "@/store";
-import DatePicker from "react-datepicker"; // Import React DatePicker
-import "react-datepicker/dist/react-datepicker.css"; // DatePicker styles
+import DatePicker from "react-datepicker"; 
+import "react-datepicker/dist/react-datepicker.css"; 
 import { saveAs } from "file-saver"; 
 
-// Dynamically import ApexCharts to avoid SSR issues
+
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 
@@ -22,32 +22,28 @@ const page = () => {
  
   
 
-  const [date, setDate] = useState(null);
-  const[startDate, setStartDate]=useState();
-  const[endDate, setEndDate]=useState();
+  
+  const[startDate, setStartDate]=useState(null);
+  const[endDate, setEndDate]=useState(null);
   
   
 
   const handleChange=(dates)=>{
-    console.log(dates);
+    
     const[start, end]=dates
     setStartDate(start);
-    console.log(startDate);
-    console.log(new Date());
     setEndDate(end);
-    console.log(endDate)
+    
   }
 
   const handleClear=()=>{
-   setStartDate();
-   setEndDate();
+   setStartDate(null);
+   setEndDate(null);
   }
 
-  useEffect(()=>{
+ 
 
-  },[])
-
-  // Calculate role counts dynamically after users data is loaded
+  
 
   
     
@@ -81,6 +77,7 @@ const page = () => {
   
     // If endDate is provided, filter based on startDate and endDate as-is
     if (endDate) {
+      console.log("helloe inside endate")
       return items.filter((item) => {
         const itemDate = new Date(item.startDate);
         return itemDate >= new Date(startDate) && itemDate <= new Date(endDate);
@@ -111,7 +108,7 @@ const page = () => {
     }, {});
   };
 
-  const filteredProjects = startDate ? filterDataByDateRange(data) : data;
+const filteredProjects = startDate ? filterDataByDateRange(data) : data;
 const filteredTasks = startDate ? filterDataByDateRange(tasks) : tasks;
 const projectsByMonth = calculateByMonth(filteredProjects);
 const tasksByMonth = calculateByMonth(filteredTasks);
@@ -206,6 +203,7 @@ const tasksByMonth = calculateByMonth(filteredTasks);
     },
     colors: ["#ff9800"], // Line color
   });
+
   const calculateTotalRoles = () => {
     return pieChartData.reduce((acc, val) => acc + val, 0);
   };
@@ -277,11 +275,6 @@ const tasksByMonth = calculateByMonth(filteredTasks);
 
 
 
-
-
-
-
-
   const exportToCSV = () => {
     const getMonthYear=(date)=>{
       return new Date(date).toLocaleDateString("en-US",{
@@ -292,19 +285,62 @@ const tasksByMonth = calculateByMonth(filteredTasks);
 
     const MonthsandYear=new Set();
     const rows=[["Months", "No. of Projects", "No. of Tasks"]];
-  
-    filteredProjects.forEach((project) => {
-      const monYear=getMonthYear(project.startDate);
 
-      if(MonthsandYear.has(monYear)) return;
+    
+     const projectFilteration=filteredProjects.reduce((acc, val)=>{
+      const monthYear=getMonthYear(val.startDate);
+      acc[monthYear]=(acc[monthYear] || 0)+1;
+      return acc
+     },{})
+     const taskFilteration=filteredTasks.reduce((acc, val)=>{
+      const monthYear=getMonthYear(val.startDate);
+      acc[monthYear]=(acc[monthYear] || 0)+1;
+      return acc
+     },{})
 
-      MonthsandYear.add(monYear);
+     const allMonths=new Set([...Object.keys(projectFilteration),... Object.keys(taskFilteration)]);
 
-      const projectCount=filteredProjects.filter((p)=> getMonthYear(p.startDate)===monYear).length;
-      const taskCount=filteredTasks.filter((t)=> getMonthYear(t.startDate)===monYear).length;
-      rows.push([monYear, projectCount, taskCount]);
+     allMonths.forEach((monthYear)=>{
+      const projectCount=projectFilteration[monthYear]||0;
+      const taskCount=taskFilteration[monthYear]||0;
+      rows.push([monthYear, projectCount, taskCount]);
+     })
+    
+    // filteredProjects.forEach((project) => {
+    //   const monYear=getMonthYear(project.startDate);
+
+    //   if(MonthsandYear.has(monYear)) return;
+
+    //   MonthsandYear.add(monYear);
+    //   if(startDate && endDate){
+        
+    //   const projectCount=filteredProjects.filter((p)=>{
+
+    //     const projectDate=new Date(p.date);
+    //     const startDateObj=new Date(startDate);
+    //     const endDateObj =new Date(endDate);
+    //     return(
+    //      getMonthYear(p.startDate)===monYear && projectDate>=startDateObj && projectDate<=endDateObj);
+    //   }).length;
+
+    //   const taskCount=filteredTasks.filter((t)=>{
+    //     const taskDate=new Date(t.date);
+    //     const startDateObj=new Date(startDate);
+    //     const endDateObj =new Date(endDate);
+        
+    //     return(
+    //     getMonthYear(t.startDate)===monYear && taskDate>=startDateObj && taskDate<=endDateObj)}).length;
+
+    //   rows.push([monYear, projectCount, taskCount]);
+
+
+    //   }else{
+    //   const projectCount=filteredProjects.filter((p)=> getMonthYear(p.startDate)===monYear).length;
+    //   const taskCount=filteredTasks.filter((t)=> getMonthYear(t.startDate)===monYear).length;
+    //   rows.push([monYear, projectCount, taskCount]);
+    //   }
       
-    });
+    // });
     
   
     let csvContent =
@@ -333,7 +369,7 @@ const tasksByMonth = calculateByMonth(filteredTasks);
             show All
           </button>
         <DatePicker
-        minDate={startDate} // End date cannot be earlier than start date
+        minDate={startDate} 
         maxDate={maxEndDate}
         scrollableMonthYearDropdown
            monthsShown={2}
